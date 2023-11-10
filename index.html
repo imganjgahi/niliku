@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1 class="appName">Niliku</h1>
+    <div class="rowOfActions">
+        <button onclick="renderGameBoard(generateBoradData(3))" >3 X 3</button>
+        <button onclick="renderGameBoard(generateBoradData(5))" >5 X 5</button>
+        <button onclick="renderGameBoard(generateBoradData(9))" >9 X 9</button>
+    </div>
+    <div id="gameBoard"></div>
+    <div class="rowOfNumbers">
+        <span onclick="fillTheCellwith(1)">1</span>
+        <span onclick="fillTheCellwith(2)">2</span>
+        <span onclick="fillTheCellwith(3)">3</span>
+        <span onclick="fillTheCellwith(4)">4</span>
+        <span onclick="fillTheCellwith(5)">5</span>
+        <span onclick="fillTheCellwith(6)">6</span>
+        <span onclick="fillTheCellwith(7)">7</span>
+        <span onclick="fillTheCellwith(8)">8</span>
+        <span onclick="fillTheCellwith(9)">9</span>
+    </div>
+
+    <script src="app.js"></script>
+    <!-- <script>
+        window.onload = function () {		
+            generateBorad(5)
+        };
+    </script> -->
+</body>
+
+</html>
