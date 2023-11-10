@@ -12,16 +12,27 @@ body {
 .appName {
     text-align: center;
 }
+
+.gameBoardWrapper {
+    max-width: 100%;
+    max-height: 370px;
+    width: 332px;
+    margin: 10px auto;
+    overflow: auto;
+}
+
 div#gameBoard {
     margin: 1rem auto;
     width: max-content;
 }
+
 .rowOfActions {
     display: flex;
     justify-content: center;
     gap: 1rem;
     align-items: center;
 }
+
 .rowOfActions button {
     width: 80px;
     padding: 8px;
@@ -29,25 +40,26 @@ div#gameBoard {
     border: unset;
     cursor: pointer;
 }
+
 .row {
     display: flex;
 }
 
 .cell {
     border: 1px solid;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .cell.hasFocusInRowOrCell {
-    background: darkslategray;
+    background: steelblue;
 }
 
 .cell.selectedcell {
-    background: darkcyan;
+    background: darkslateblue;
 }
 
 .rowOfNumbers {

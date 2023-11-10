@@ -1,5 +1,27 @@
 let selectedCellPosition = undefined
 let boardData = undefined
+
+function hasDuplicatedNum(data, rowIndex, cellIndex, targetNum) {
+    return data.some((row, x) => row.some((cell, y) => {
+        if (x !== rowIndex && y === cellIndex) {
+            console.log("check Other Cols", cell.num === targetNum, cell.num, targetNum)
+            return cell.num === targetNum
+        } else if (x === rowIndex && y !== cellIndex) {
+            console.log("check row Cols", cell.num === targetNum, cell.num, targetNum)
+            return cell.num === targetNum
+        }
+
+    }))
+}
+function checkUserWin(data) {
+    let isWin = true
+    data[0].forEach((cell, cellIndex) => {
+        if (isWin && hasDuplicatedNum(data, 0, cellIndex, cell.num)) {
+            isWin = false
+        }
+    })
+    return isWin
+}
 function generateNumberOfCell(level, filterdNumbers) {
     const numbers = []
     for (let i = 1; i <= level; i++) {
@@ -16,7 +38,7 @@ function generateCells(level, preRows) {
     const cells = []
     const usedNumbers = []
     for (let i = 0; i < level; i++) {
-        const flatedRows = preRows.map(pr => pr[i])
+        const flatedRows = preRows.map(pr => pr[i].num)
         usedNumbers.concat(flatedRows)
         const cellNumber = generateNumberOfCell(level, [...flatedRows, ...usedNumbers])
         usedNumbers.push(cellNumber)
@@ -27,13 +49,22 @@ function generateCells(level, preRows) {
 const timer = ms => new Promise(res => setTimeout(res, ms))
 function generateRow(level) {
     const result = []
+    let maxHint = level + 5
     for (let i = 0; i < level; i++) {
+        let maxHintInRow = 3
         const cells = generateCells(level, result)
         if (cells.includes(undefined)) {
-            console.log("I: ", i) //TODO CALCULATE NUMS
             i--
         } else {
-            result.push(cells)
+            result.push(cells.map(x => {
+                if (maxHintInRow > 0 && maxHint > 0 && Math.floor(Math.random() * level) > level / 2) {
+                    maxHint--
+                    maxHintInRow -- 
+                    return { num: x, show: true }
+                } else {
+                    return { num: x, show: false }
+                }
+            }))
         }
     }
 
@@ -65,7 +96,9 @@ function renderGameBoard(rows, targetCell = undefined) {
                     cellEl.className = "cell hasFocusInRowOrCell"
                 }
             }
-            cellEl.innerText = cell
+            // cellEl.style.opacity =  cell.show ? 1 : 0.3
+            cellEl.innerText = cell.show ? cell.num : ""
+            // cellEl.innerText = cell.num
             rowEl.appendChild(cellEl)
         })
         rootElement.appendChild(rowEl)
@@ -73,12 +106,14 @@ function renderGameBoard(rows, targetCell = undefined) {
 }
 
 function fillTheCellwith(number) {
-    console.log(number, selectedCellPosition, boardData)
     if (selectedCellPosition) {
         const newBoardGameData = JSON.parse(JSON.stringify(boardData))
-        newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = number
+        newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: number, show: true }
         boardData = newBoardGameData
         renderGameBoard(newBoardGameData, selectedCellPosition)
+        if (JSON.parse(JSON.stringify(newBoardGameData)).flat(10).every(x => x.show))
+            console.log(checkUserWin(newBoardGameData))
+
     }
 }
 window.addEventListener('load', () => {
