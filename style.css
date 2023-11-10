@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+div#gameState {
+    text-align: center;
+}
+
 body {
     background-color: #444;
     color: #eee;

@@ -1,14 +1,14 @@
 let selectedCellPosition = undefined
 let boardData = undefined
-
+let gameLevel = 3
 function hasDuplicatedNum(data, rowIndex, cellIndex, targetNum) {
     return data.some((row, x) => row.some((cell, y) => {
         if (x !== rowIndex && y === cellIndex) {
             console.log("check Other Cols", cell.num === targetNum, cell.num, targetNum)
-            return cell.num === targetNum
+            return cell.show && cell.num === targetNum
         } else if (x === rowIndex && y !== cellIndex) {
             console.log("check row Cols", cell.num === targetNum, cell.num, targetNum)
-            return cell.num === targetNum
+            return cell.show && cell.num === targetNum
         }
 
     }))
@@ -59,7 +59,7 @@ function generateRow(level) {
             result.push(cells.map(x => {
                 if (maxHintInRow > 0 && maxHint > 0 && Math.floor(Math.random() * level) > level / 2) {
                     maxHint--
-                    maxHintInRow -- 
+                    maxHintInRow--
                     return { num: x, show: true }
                 } else {
                     return { num: x, show: false }
@@ -72,6 +72,7 @@ function generateRow(level) {
 }
 
 function generateBoradData(level) {
+    gameLevel = level
     return generateRow(level)
 }
 
@@ -111,11 +112,17 @@ function fillTheCellwith(number) {
         newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: number, show: true }
         boardData = newBoardGameData
         renderGameBoard(newBoardGameData, selectedCellPosition)
-        if (JSON.parse(JSON.stringify(newBoardGameData)).flat(10).every(x => x.show))
-            console.log(checkUserWin(newBoardGameData))
+        displayedCellsLength = JSON.parse(JSON.stringify(newBoardGameData))
+            .flat(10).filter(x => x.show).length
+
+        document.getElementById("gameState").innerText = (gameLevel * gameLevel) + "/" + displayedCellsLength
+        if (displayedCellsLength === (gameLevel * gameLevel) && checkUserWin(newBoardGameData)) {
+            document.getElementById("gameState").innerText = "YOU WIN"
+        }
 
     }
 }
 window.addEventListener('load', () => {
-    renderGameBoard(generateBoradData(3))
+    renderGameBoard(generateBoradData(gameLevel))
+    document.getElementById("gameState").innerText = "Set Your First Number"
 })
