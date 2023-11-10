@@ -1,6 +1,6 @@
 let selectedCellPosition = undefined
 let boardData = undefined
-let gameLevel = 3
+let gameLevel = 5
 function hasDuplicatedNum(data, rowIndex, cellIndex, targetNum) {
     return data.some((row, x) => row.some((cell, y) => {
         if (x !== rowIndex && y === cellIndex) {
@@ -60,7 +60,7 @@ function generateRow(level) {
                 if (maxHintInRow > 0 && maxHint > 0 && Math.floor(Math.random() * level) > level / 2) {
                     maxHint--
                     maxHintInRow--
-                    return { num: x, show: true }
+                    return { num: x, show: "isFixed" }
                 } else {
                     return { num: x, show: false }
                 }
@@ -90,10 +90,13 @@ function renderGameBoard(rows, targetCell = undefined) {
                 selectedCellPosition = { rowIndex, cellIndex }
             })
             cellEl.className = "cell"
+            if (cell.show === "isFixed") {
+                cellEl.className = "cell isFixed"
+            }
             if (targetCell) {
-                if (targetCell.rowIndex === rowIndex && targetCell.cellIndex === cellIndex) {
+                if (cell.show !== "isFixed" && targetCell.rowIndex === rowIndex && targetCell.cellIndex === cellIndex) {
                     cellEl.className = "cell selectedcell"
-                } else if (targetCell.rowIndex === rowIndex || targetCell.cellIndex === cellIndex) {
+                } else if (cell.show !== "isFixed" && (targetCell.rowIndex === rowIndex || targetCell.cellIndex === cellIndex)) {
                     cellEl.className = "cell hasFocusInRowOrCell"
                 }
             }
@@ -109,7 +112,10 @@ function renderGameBoard(rows, targetCell = undefined) {
 function fillTheCellwith(number) {
     if (selectedCellPosition) {
         const newBoardGameData = JSON.parse(JSON.stringify(boardData))
-        newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: number, show: true }
+        if (newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].show === "isFixed") {
+            return
+        }
+        newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: number, show: "withUser" }
         boardData = newBoardGameData
         renderGameBoard(newBoardGameData, selectedCellPosition)
         displayedCellsLength = JSON.parse(JSON.stringify(newBoardGameData))

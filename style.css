@@ -50,12 +50,17 @@ div#gameBoard {
 }
 
 .cell {
-    border: 1px solid;
+    border: 1px solid #eee;
     width: 35px;
     height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.cell.isFixed {
+    background: #222;
+    color: #eee;
 }
 
 .cell.hasFocusInRowOrCell {
@@ -74,7 +79,7 @@ div#gameBoard {
 
 .rowOfNumbers span {
     width: 40px;
-    border: 1px solid;
+    border: 1px solid #eee;
     height: 40px;
     display: flex;
     align-items: center;
