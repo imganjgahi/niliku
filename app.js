@@ -12,23 +12,24 @@ function gameAnalize() {
 }
 
 function checkDuplicatedNumber(data) {
-    let duplicatedNumberLength = {}
+    return 3
+    // let duplicatedNumberLength = {}
 
-    for (let x = 0; x < gameLevel; x++) {
-        for (let y = 0; y < gameLevel; y++) {
-            const targetNumber = data[x] ? data[x][y] ? data[x][y].num : undefined : undefined
-            if (!targetNumber) return
-            const hasDuplicatedInRow = data[x].forEach((cell, cellIndex) => {
-                cellIndex !== y && +cell.num === +targetNumber
-            })
-            const hasDuplicateInOtherColls = data.forEach((row, rowIndex) => row.some((cell, cellIndex) => {
-                return rowIndex !== x && cellIndex === y && +cell.num === +targetNumber
-            }))
-            console.log("X: ", x, y, hasDuplicatedInRow.length, hasDuplicateInOtherColls.length)
-            duplicatedNumberLength += hasDuplicatedInRow.length + hasDuplicateInOtherColls.length
-        }
-    }
-    return duplicatedNumberLength
+    // for (let x = 0; x < gameLevel; x++) {
+    //     for (let y = 0; y < gameLevel; y++) {
+    //         const targetNumber = data[x] ? data[x][y] ? data[x][y].num : undefined : undefined
+    //         if (!targetNumber) return
+    //         const hasDuplicatedInRow = data[x].forEach((cell, cellIndex) => {
+    //             cellIndex !== y && +cell.num === +targetNumber
+    //         })
+    //         const hasDuplicateInOtherColls = data.forEach((row, rowIndex) => row.some((cell, cellIndex) => {
+    //             return rowIndex !== x && cellIndex === y && +cell.num === +targetNumber
+    //         }))
+    //         console.log("X: ", x, y, hasDuplicatedInRow.length, hasDuplicateInOtherColls.length)
+    //         duplicatedNumberLength += hasDuplicatedInRow.length + hasDuplicateInOtherColls.length
+    //     }
+    // }
+    // return duplicatedNumberLength
 }
 function checkUserWin(data) {
     let isWin = true
