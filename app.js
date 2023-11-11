@@ -256,13 +256,15 @@ function resetGame(level, force) {
     localStorage.removeItem("currentState")
     renderGameBoard(generateBoradData(level))
     renderNumberPad(level)
-    document.getElementById("gameState").innerText = "Set Your First Number"
+    document.getElementById("gameState").innerText = "Pick a Cell and Guess Your First Number"
 }
 window.addEventListener('load', () => {
     currentState = localStorage.getItem("currentState") ? JSON.parse(localStorage.getItem("currentState")) : undefined
     if (currentState) {
         gameLevel = +currentState.gameLevel
+        document.getElementById("gameState").innerText = "Pick a Cell and Guess Your Number"
         renderGameBoard(currentState.board)
+        renderNumberPad(gameLevel)
     } else {
         resetGame(gameLevel, true)
     }
