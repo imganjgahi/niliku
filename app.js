@@ -1,25 +1,22 @@
 let selectedCellPosition = undefined
 let boardData = undefined
 let gameLevel = 5
-function hasDuplicatedNum(data, rowIndex, cellIndex, targetNum) {
-    return data.some((row, x) => row.some((cell, y) => {
-        if (x !== rowIndex && y === cellIndex) {
-            console.log("check Other Cols", cell.num === targetNum, cell.num, targetNum)
-            return cell.show && cell.num === targetNum
-        } else if (x === rowIndex && y !== cellIndex) {
-            console.log("check row Cols", cell.num === targetNum, cell.num, targetNum)
-            return cell.show && cell.num === targetNum
-        }
 
-    }))
-}
 function checkUserWin(data) {
     let isWin = true
-    data[0].forEach((cell, cellIndex) => {
-        if (isWin && hasDuplicatedNum(data, 0, cellIndex, cell.num)) {
-            isWin = false
+    for (let x = 0; x < gameLevel; x++) {
+        for (let y = 0; y < gameLevel; y++) {
+            if (isWin) {
+                const targetNumber = data[x] ? data[x][y] ? data[x][y].num : undefined : undefined
+                if (!targetNumber) return
+                const hasDuplicatedInRow = data[x].some((cell, cellIndex) => cellIndex !== y && +cell.num === +targetNumber)
+                const hasDuplicateInOtherColls = data.some((row, rowIndex) => row.some((cell, cellIndex) => {
+                    return rowIndex !== x && cellIndex === y && +cell.num === +targetNumber
+                }))
+                isWin = !hasDuplicatedInRow && !hasDuplicateInOtherColls
+            }
         }
-    })
+    }
     return isWin
 }
 function generateNumberOfCell(level, filterdNumbers) {
@@ -49,16 +46,15 @@ function generateCells(level, preRows) {
 const timer = ms => new Promise(res => setTimeout(res, ms))
 function generateRow(level) {
     const result = []
-    let maxHint = level + 5
+    let maxHint = Math.floor(Math.random() * (level / 3))
     for (let i = 0; i < level; i++) {
-        let maxHintInRow = 3
+        let maxHintInRow = maxHint > Math.floor(level / 3) ? maxHint : Math.floor(level / 3)
         const cells = generateCells(level, result)
         if (cells.includes(undefined)) {
             i--
         } else {
             result.push(cells.map(x => {
-                if (maxHintInRow > 0 && maxHint > 0 && Math.floor(Math.random() * level) > level / 2) {
-                    maxHint--
+                if (maxHintInRow > 0 && Math.floor(Math.random() * level) > level - 3) {
                     maxHintInRow--
                     return { num: x, show: "isFixed" }
                 } else {
@@ -76,7 +72,24 @@ function generateBoradData(level) {
     return generateRow(level)
 }
 
-function renderGameBoard(rows, targetCell = undefined) {
+
+function selectedCellChangedHandler(rowIndex, cellIndex) {
+    const cells = Array.from(document.querySelectorAll(".cell"))
+    cells.forEach(cellEl => {
+        const [row, col] = cellEl.getAttribute("data-cell").split("-")
+        if (!cellEl.className.includes("isFixed")) {
+            if (+row === rowIndex && +col === cellIndex) {
+                cellEl.className = "cell selectedcell"
+            } else if ((+row === rowIndex || +col === cellIndex)) {
+                cellEl.className = "cell hasFocusInRowOrCell"
+            } else {
+                cellEl.className = "cell"
+            }
+        }
+    })
+}
+function renderGameBoard(rows) {
+    console.log("rows: ", rows)
     boardData = rows
     const rootElement = document.getElementById("gameBoard")
     rootElement.innerHTML = ""
@@ -85,20 +98,15 @@ function renderGameBoard(rows, targetCell = undefined) {
         rowEl.className = "row"
         row.forEach((cell, cellIndex) => {
             const cellEl = document.createElement('div')
+            cellEl.setAttribute("data-cell", rowIndex + "-" + cellIndex)
             cellEl.addEventListener('click', (e) => {
-                renderGameBoard(rows, { rowIndex, cellIndex })
+                if (cell.show === "isFixed") return
                 selectedCellPosition = { rowIndex, cellIndex }
+                selectedCellChangedHandler(rowIndex, cellIndex)
             })
             cellEl.className = "cell"
             if (cell.show === "isFixed") {
                 cellEl.className = "cell isFixed"
-            }
-            if (targetCell) {
-                if (cell.show !== "isFixed" && targetCell.rowIndex === rowIndex && targetCell.cellIndex === cellIndex) {
-                    cellEl.className = "cell selectedcell"
-                } else if (cell.show !== "isFixed" && (targetCell.rowIndex === rowIndex || targetCell.cellIndex === cellIndex)) {
-                    cellEl.className = "cell hasFocusInRowOrCell"
-                }
             }
             // cellEl.style.opacity =  cell.show ? 1 : 0.3
             cellEl.innerText = cell.show ? cell.num : ""
@@ -109,30 +117,80 @@ function renderGameBoard(rows, targetCell = undefined) {
     })
 }
 
-function fillTheCellwith(number) {
-    if (selectedCellPosition) {
-        const newBoardGameData = JSON.parse(JSON.stringify(boardData))
-        if (newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].show === "isFixed") {
-            return
-        }
-        newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: number, show: "withUser" }
-        boardData = newBoardGameData
-        renderGameBoard(newBoardGameData, selectedCellPosition)
-        displayedCellsLength = JSON.parse(JSON.stringify(newBoardGameData))
-            .flat(10).filter(x => x.show).length
-
-        document.getElementById("gameState").innerText = (gameLevel * gameLevel) + "/" + displayedCellsLength
-        if (displayedCellsLength === (gameLevel * gameLevel)) {
-            if (checkUserWin(newBoardGameData)) {
-                document.getElementById("gameState").innerText = "YOU WIN"
-            } else {
-                document.getElementById("gameState").innerText = "Game Over"
-            }
-        }
-
+function renderNumberPad(level) {
+    const rootElement = document.querySelector(".rowOfNumbers")
+    rootElement.innerHTML = ""
+    for (let i = 1; i <= level; i++) {
+        const element = document.createElement('span')
+        element.className = "numPad"
+        element.innerText = i
+        element.addEventListener("click", () => {
+            fillTheCellwith(i)
+        })
+        rootElement.appendChild(element)
     }
 }
-window.addEventListener('load', () => {
-    renderGameBoard(generateBoradData(gameLevel))
+
+function cellValueChangedHandler() {
+    if (selectedCellPosition) {
+        const cells = Array.from(document.querySelectorAll(".cell"))
+        cells.forEach(el => {
+            const [row, col] = el.getAttribute('data-cell').split("-")
+            if (+row === selectedCellPosition.rowIndex && +col === selectedCellPosition.cellIndex) {
+                el.innerText = boardData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].num
+            }
+        })
+    }
+}
+
+function checkGameState() {
+    displayedCellsLength = JSON.parse(JSON.stringify(boardData))
+        .flat(10).filter(x => x.show).length
+    document.getElementById("gameState").innerText = (gameLevel * gameLevel) + "/" + displayedCellsLength
+    if (displayedCellsLength === (gameLevel * gameLevel)) {
+        if (checkUserWin(boardData)) {
+            document.getElementById("gameState").innerText = "YOU WIN"
+        } else {
+            document.getElementById("gameState").innerText = "Game Over"
+        }
+    }
+}
+
+function updateBoardData(newNumber) {
+    const newBoardGameData = JSON.parse(JSON.stringify(boardData))
+    if (newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].show !== "isFixed") {
+        const oldValue = newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].num || ""
+        let finalNumber = ("00" + oldValue + "" + newNumber).slice(gameLevel < 10 ? -1 : -2)
+        if (+finalNumber > +gameLevel) {
+            finalNumber = finalNumber.slice(-1)
+        }
+        if (+finalNumber > 0) {
+            newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: +finalNumber, show: "withUser" }
+        }
+        boardData = newBoardGameData
+    }
+}
+function fillTheCellwith(number) {
+    if (selectedCellPosition) {
+        updateBoardData(number)
+        cellValueChangedHandler()
+        checkGameState()
+    }
+}
+
+function resetGame(level) {
+    boardData = undefined
+    selectedCellPosition = undefined
+    renderGameBoard(generateBoradData(level))
+    renderNumberPad(level)
     document.getElementById("gameState").innerText = "Set Your First Number"
+}
+window.addEventListener('load', () => {
+    resetGame(gameLevel)
+})
+
+window.addEventListener('keydown', (e) => {
+    if (!isNaN(+e.key) && +e.key <= gameLevel) {
+        fillTheCellwith(e.key)
+    }
 })

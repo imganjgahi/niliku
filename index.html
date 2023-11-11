@@ -11,26 +11,17 @@
 <body>
     <h1 class="appName">Niliku</h1>
     <div class="rowOfActions">
-        <button onclick="renderGameBoard(generateBoradData(3))">3 X 3</button>
-        <button onclick="renderGameBoard(generateBoradData(5))">5 X 5</button>
-        <button onclick="renderGameBoard(generateBoradData(9))">9 X 9</button>
+        <button onclick="resetGame(3)">3 X 3</button>
+        <button onclick="resetGame(5)">5 X 5</button>
+        <button onclick="resetGame(9)">9 X 9</button>
+        <button onclick="resetGame(20)">20 X 20</button>
         <!-- <button onclick="renderGameBoard(generateBoradData(20))">20 X 20</button> -->
     </div>
     <div class="gameBoardWrapper">
         <div id="gameBoard"></div>
     </div>
     <div id="gameState"></div>
-    <div class="rowOfNumbers">
-        <span onclick="fillTheCellwith(1)">1</span>
-        <span onclick="fillTheCellwith(2)">2</span>
-        <span onclick="fillTheCellwith(3)">3</span>
-        <span onclick="fillTheCellwith(4)">4</span>
-        <span onclick="fillTheCellwith(5)">5</span>
-        <span onclick="fillTheCellwith(6)">6</span>
-        <span onclick="fillTheCellwith(7)">7</span>
-        <span onclick="fillTheCellwith(8)">8</span>
-        <span onclick="fillTheCellwith(9)">9</span>
-    </div>
+    <div class="rowOfNumbers"></div>
 
     <script src="app.js"></script>
     <!-- <script>
