@@ -12,13 +12,16 @@ function gameAnalize() {
 }
 
 function checkDuplicatedNumber(data) {
-    let duplicatedNumberLength = 0
+    let duplicatedNumberLength = {}
+
     for (let x = 0; x < gameLevel; x++) {
         for (let y = 0; y < gameLevel; y++) {
             const targetNumber = data[x] ? data[x][y] ? data[x][y].num : undefined : undefined
             if (!targetNumber) return
-            const hasDuplicatedInRow = data[x].filter((cell, cellIndex) => cellIndex !== y && +cell.num === +targetNumber)
-            const hasDuplicateInOtherColls = data.filter((row, rowIndex) => row.some((cell, cellIndex) => {
+            const hasDuplicatedInRow = data[x].forEach((cell, cellIndex) => {
+                cellIndex !== y && +cell.num === +targetNumber
+            })
+            const hasDuplicateInOtherColls = data.forEach((row, rowIndex) => row.some((cell, cellIndex) => {
                 return rowIndex !== x && cellIndex === y && +cell.num === +targetNumber
             }))
             console.log("X: ", x, y, hasDuplicatedInRow.length, hasDuplicateInOtherColls.length)
@@ -101,7 +104,6 @@ function lightingCols() {
     let xSwitch = 1
     let ySwitch = 1
     const rows = Array.from(document.querySelectorAll(".row"))
-    console.log("ROWS: ", rows)
     rows.forEach((row) => {
         const cells = row.querySelectorAll(".cell")
         ySwitch = xSwitch <= 0 ? -2 : 1
@@ -137,7 +139,6 @@ function selectedCellChangedHandler(rowIndex, cellIndex) {
     lightingCols()
 }
 function renderGameBoard(rows) {
-    console.log("rows: ", rows)
     boardData = rows
     const rootElement = document.getElementById("gameBoard")
     rootElement.innerHTML = ""
