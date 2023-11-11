@@ -122,8 +122,12 @@ function fillTheCellwith(number) {
             .flat(10).filter(x => x.show).length
 
         document.getElementById("gameState").innerText = (gameLevel * gameLevel) + "/" + displayedCellsLength
-        if (displayedCellsLength === (gameLevel * gameLevel) && checkUserWin(newBoardGameData)) {
-            document.getElementById("gameState").innerText = "YOU WIN"
+        if (displayedCellsLength === (gameLevel * gameLevel)) {
+            if (checkUserWin(newBoardGameData)) {
+                document.getElementById("gameState").innerText = "YOU WIN"
+            } else {
+                document.getElementById("gameState").innerText = "Game Over"
+            }
         }
 
     }
