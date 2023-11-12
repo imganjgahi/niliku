@@ -245,7 +245,7 @@ function fillTheCellwith(number) {
 }
 
 function resetGame(level, force) {
-    if ((!force && localStorage.getItem("currentState")) && confirm("Are you Shure?") === false) return
+    if ((!force && localStorage.getItem("currentState")) && confirm("Are you Shure you wanna reset the game?") === false) return
     boardData = undefined
     selectedCellPosition = undefined
     localStorage.removeItem("currentState")
@@ -255,7 +255,7 @@ function resetGame(level, force) {
 }
 
 function solvePuzzle() {
-    if (confirm("Are you Shure?") === false) return
+    if (confirm("Are you Shure you wanna solved puzzle?") === false) return
     const bordNumbers = boardData.map(row => row.map(c => c.num)).flat().join("")
     const newBoardGame = JSON.parse(JSON.stringify(boardData))
     const newNumbers = sudoku.solve(bordNumbers)
@@ -267,7 +267,10 @@ function solvePuzzle() {
                 show: col.show === "isFixed" ? col.show : "withUser"
             }
         })))
+    } else {
+        alert("cant solved this puzzle :/")
     }
+    checkGameState()
 
 }
 window.addEventListener('load', () => {
