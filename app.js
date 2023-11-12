@@ -1,12 +1,10 @@
 let selectedCellPosition = undefined
 let boardData = undefined
-let gameLevel = 9
-
+let gameLevel = "hard"
 
 function gameAnalize() {
     console.log(checkDuplicatedNumber(boardData))
     const gameAnalizData = localStorage.getItem("analize") ? JSON.parse(JSON.stringify(localStorage.getItem("analize"))) : {
-        gameLevel,
         currectAnswer: 3
     }
 }
@@ -33,8 +31,8 @@ function checkDuplicatedNumber(data) {
 }
 function checkUserWin(data) {
     let isWin = true
-    for (let x = 0; x < gameLevel; x++) {
-        for (let y = 0; y < gameLevel; y++) {
+    for (let x = 0; x < 9; x++) {
+        for (let y = 0; y < 9; y++) {
             if (isWin) {
                 const targetNumber = data[x] ? data[x][y] ? data[x][y].num : undefined : undefined
                 if (!targetNumber) return
@@ -48,9 +46,20 @@ function checkUserWin(data) {
     }
     return isWin
 }
-function generateNumberOfCell(level, filterdNumbers) {
+
+function isValidMove(num, usedNumbers) {
+    // console.log(usedNumbers.some(x => x === num), num, usedNumbers)
+    return num && !usedNumbers.some(x => x === num)
+}
+function generateSudoku() {
+    const rows = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
+    let numbers = [...Array(9).keys()].map(n => n + 1);
+    const cellpostions = [...Array(9).keys()].map(a => [...Array(9).keys()].map(b => (a * 9) + (b)));
+    console.log(cellpostions)
+}
+function generateNumberOfCell(filterdNumbers) {
     const numbers = []
-    for (let i = 1; i <= level; i++) {
+    for (let i = 1; i <= 9; i++) {
         if (filterdNumbers.includes(i))
             continue
         numbers.push(i)
@@ -60,13 +69,14 @@ function generateNumberOfCell(level, filterdNumbers) {
     return finalResult
 }
 
-function generateCells(level, preRows) {
+function generateCells(preRows) {
     const cells = []
     const usedNumbers = []
-    for (let i = 0; i < level; i++) {
+    for (let i = 0; i < 9; i++) {
         const flatedRows = preRows.map(pr => pr[i].num)
+        flatedRows.push()
         usedNumbers.concat(flatedRows)
-        const cellNumber = generateNumberOfCell(level, [...flatedRows, ...usedNumbers])
+        const cellNumber = generateNumberOfCell([...flatedRows, ...usedNumbers])
         usedNumbers.push(cellNumber)
         cells[i] = cellNumber
     }
@@ -75,29 +85,22 @@ function generateCells(level, preRows) {
 const timer = ms => new Promise(res => setTimeout(res, ms))
 function generateRow(level) {
     const result = []
-    let maxHint = Math.floor(Math.random() * (level / 3))
-    for (let i = 0; i < level; i++) {
-        let maxHintInRow = maxHint > Math.floor(level / 3) ? maxHint : Math.floor(level / 3)
-        const cells = generateCells(level, result)
-        if (cells.includes(undefined)) {
-            i--
-        } else {
-            result.push(cells.map(x => {
-                if (maxHintInRow > 0 && Math.floor(Math.random() * level) > level - 3) {
-                    maxHintInRow--
-                    return { num: x, show: "isFixed" }
-                } else {
-                    return { num: x, show: false }
-                }
-            }))
+    let maxHint = Math.floor(Math.random() * (9 / 3))
+    const numbers = sudoku.generate(level)
+    console.log(numbers)
+    for (let r = 0; r < 9; r++) {
+        const newRow = []
+        for (let c = 0; c < 9; c++) {
+            const targetNumber = numbers.split("")[(r * 9) + c]
+            newRow.push({ num: targetNumber !== "." ? +targetNumber : ".", show: targetNumber !== "." ? "isFixed" : undefined })
         }
+        result.push(newRow)
     }
 
     return result
 }
 
 function generateBoradData(level) {
-    gameLevel = level
     return generateRow(level)
 }
 
@@ -139,7 +142,7 @@ function selectedCellChangedHandler(rowIndex, cellIndex) {
     })
     lightingCols()
 }
-function renderGameBoard(rows) {
+function renderGameBoard(level, rows) {
     boardData = rows
     const rootElement = document.getElementById("gameBoard")
     rootElement.innerHTML = ""
@@ -181,10 +184,10 @@ function renderGameBoard(rows) {
     }, 100);
 }
 
-function renderNumberPad(level) {
+function renderNumberPad() {
     const rootElement = document.querySelector(".rowOfNumbers")
     rootElement.innerHTML = ""
-    for (let i = 1; i <= level; i++) {
+    for (let i = 1; i <= 9; i++) {
         const element = document.createElement('span')
         element.className = "numPad"
         element.innerText = i
@@ -211,8 +214,8 @@ function cellValueChangedHandler() {
 function checkGameState() {
     displayedCellsLength = JSON.parse(JSON.stringify(boardData))
         .flat(10).filter(x => x.show).length
-    document.getElementById("gameState").innerText = (gameLevel * gameLevel) + "/" + displayedCellsLength
-    if (displayedCellsLength === (gameLevel * gameLevel)) {
+    document.getElementById("gameState").innerText = 81 + "/" + displayedCellsLength
+    if (displayedCellsLength === 81) {
         if (checkUserWin(boardData)) {
             localStorage.removeItem("currentState")
             document.getElementById("gameState").innerText = "YOU WIN"
@@ -225,18 +228,10 @@ function checkGameState() {
 function updateBoardData(newNumber) {
     const newBoardGameData = JSON.parse(JSON.stringify(boardData))
     if (newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].show !== "isFixed") {
-        const oldValue = newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex].num || ""
-        let finalNumber = ("00" + oldValue + "" + newNumber).slice(gameLevel < 10 ? -1 : -2)
-        if (+finalNumber > +gameLevel) {
-            finalNumber = finalNumber.slice(-1)
-        }
-        if (+finalNumber > 0) {
-            newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: +finalNumber, show: "withUser" }
-        }
+        newBoardGameData[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex] = { num: newNumber, show: "withUser" }
         boardData = newBoardGameData
     }
     localStorage.setItem("currentState", JSON.stringify({
-        gameLevel,
         board: newBoardGameData
     }))
 }
@@ -254,24 +249,41 @@ function resetGame(level, force) {
     boardData = undefined
     selectedCellPosition = undefined
     localStorage.removeItem("currentState")
-    renderGameBoard(generateBoradData(level))
-    renderNumberPad(level)
-    document.getElementById("gameState").innerText = "Pick a Cell and Guess Your First Number"
+    renderGameBoard(level, generateBoradData(level))
+    renderNumberPad()
+    document.getElementById("gameState").innerText = "Pick a Cell and Guess Your First Number Or "
+}
+
+function solvePuzzle() {
+    if (confirm("Are you Shure?") === false) return
+    const bordNumbers = boardData.map(row => row.map(c => c.num)).flat().join("")
+    const newBoardGame = JSON.parse(JSON.stringify(boardData))
+    const newNumbers = sudoku.solve(bordNumbers)
+    if (newNumbers) {
+        const _newNumbers = newNumbers.split("")
+        renderGameBoard(gameLevel, newBoardGame.map((row, rowIndex) => row.map((col, colIndex) => {
+            return {
+                num: _newNumbers[(rowIndex * 9) + colIndex],
+                show: col.show === "isFixed" ? col.show : "withUser"
+            }
+        })))
+    }
+
 }
 window.addEventListener('load', () => {
+    console.log(generateSudoku())
     currentState = localStorage.getItem("currentState") ? JSON.parse(localStorage.getItem("currentState")) : undefined
     if (currentState) {
-        gameLevel = +currentState.gameLevel
-        document.getElementById("gameState").innerText = "Pick a Cell and Guess Your Number"
-        renderGameBoard(currentState.board)
-        renderNumberPad(gameLevel)
+        document.getElementById("gameState").innerText = "Pick a Cell and Guess Your Number Or"
+        renderGameBoard(gameLevel, currentState.board)
+        renderNumberPad()
     } else {
         resetGame(gameLevel, true)
     }
 })
 
 window.addEventListener('keydown', (e) => {
-    if (!isNaN(+e.key) && +e.key <= gameLevel) {
+    if (!isNaN(+e.key) && +e.key > 0 && +e.key <= 9) {
         fillTheCellwith(e.key)
     }
 })

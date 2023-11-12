@@ -11,16 +11,18 @@
 <body>
     <h1 class="appName">Niliku</h1>
     <div class="rowOfActions">
-        <button onclick="resetGame(6)">6 X 6</button>
-        <button onclick="resetGame(9)">9 X 9</button>
-        <button onclick="resetGame(20)">20 X 20</button>
+        <button onclick="resetGame('medium')">Easy</button>
+        <button onclick="resetGame('hard')">Hard</button>
+        <button onclick="resetGame('inhuman')">Master</button>
     </div>
     <div class="gameBoardWrapper">
         <div id="gameBoard"></div>
     </div>
     <div id="gameState"></div>
+    <button class="solveButton" onclick="solvePuzzle()">solve</button>
     <div class="rowOfNumbers"></div>
 
+    <script src="generator.js"></script>
     <script src="app.js"></script>
 </body>
 

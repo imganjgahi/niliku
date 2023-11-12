@@ -111,3 +111,9 @@ div#gameBoard {
 .rowOfNumbers span:hover {
     background: darkcyan;
 }
+
+.solveButton {
+    width: 80px;
+    margin: 0 auto;
+    display: block;
+}
