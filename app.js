@@ -251,7 +251,7 @@ function resetGame(level, force) {
     localStorage.removeItem("currentState")
     renderGameBoard(level, generateBoradData(level))
     renderNumberPad()
-    document.getElementById("gameState").innerText = "Pick a Cell and Guess Your First Number Or "
+    document.getElementById("gameState").innerText = "Pick a Cell and Guess Your First Number"
 }
 
 function solvePuzzle() {
@@ -277,7 +277,7 @@ window.addEventListener('load', () => {
     console.log(generateSudoku())
     currentState = localStorage.getItem("currentState") ? JSON.parse(localStorage.getItem("currentState")) : undefined
     if (currentState) {
-        document.getElementById("gameState").innerText = "Pick a Cell and Guess Your Number Or"
+        document.getElementById("gameState").innerText = "Pick a Cell and Guess Your Number"
         renderGameBoard(gameLevel, currentState.board)
         renderNumberPad()
     } else {
