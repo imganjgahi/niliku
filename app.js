@@ -3,7 +3,7 @@ let boardData = undefined
 let gameLevel = "hard"
 
 function gameAnalize() {
-    console.log(checkDuplicatedNumber(boardData))
+    // console.log(checkDuplicatedNumber(boardData))
     const gameAnalizData = localStorage.getItem("analize") ? JSON.parse(JSON.stringify(localStorage.getItem("analize"))) : {
         currectAnswer: 3
     }
@@ -55,7 +55,7 @@ function generateSudoku() {
     const rows = Array.from({ length: 9 }, () => Array.from({ length: 9 }, () => 0));
     let numbers = [...Array(9).keys()].map(n => n + 1);
     const cellpostions = [...Array(9).keys()].map(a => [...Array(9).keys()].map(b => (a * 9) + (b)));
-    console.log(cellpostions)
+    // console.log(cellpostions)
 }
 function generateNumberOfCell(filterdNumbers) {
     const numbers = []
@@ -87,7 +87,7 @@ function generateRow(level) {
     const result = []
     let maxHint = Math.floor(Math.random() * (9 / 3))
     const numbers = sudoku.generate(level)
-    console.log(numbers)
+    // console.log(numbers)
     for (let r = 0; r < 9; r++) {
         const newRow = []
         for (let c = 0; c < 9; c++) {
@@ -274,7 +274,7 @@ function solvePuzzle() {
 
 }
 window.addEventListener('load', () => {
-    console.log(generateSudoku())
+    // console.log(generateSudoku())
     currentState = localStorage.getItem("currentState") ? JSON.parse(localStorage.getItem("currentState")) : undefined
     if (currentState) {
         document.getElementById("gameState").innerText = "Pick a Cell and Guess Your Number"
