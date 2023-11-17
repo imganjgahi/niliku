@@ -270,6 +270,8 @@ function getCandidateNumbers() {
     if(candidates) {
         const numbers = candidates[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex]
         document.getElementById("gameState").innerText = `candidate numbers: ${numbers.split("").join(", ")}`
+    } else {
+        alert("puzzle has wrong numbers :/")
     }
 }
 function solvePuzzle() {
