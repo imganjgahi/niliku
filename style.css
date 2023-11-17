@@ -25,14 +25,13 @@ body {
 }
 
 div#gameBoard {
-    margin: 1rem auto;
-    width: max-content;
+    width: 100%;
 }
 
 .rowOfActions {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: .5rem;
     align-items: center;
 }
 
@@ -46,6 +45,7 @@ div#gameBoard {
 
 .row {
     display: flex;
+    justify-content: center;
 }
 
 .cell {
