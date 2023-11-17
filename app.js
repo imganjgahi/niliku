@@ -205,6 +205,15 @@ function renderNumberPad() {
     rootElement.appendChild(element)
 }
 
+function changeWrongNumbersColor() {
+    const cells = Array.from(document.querySelectorAll(".cell"))
+    const wrongCells = []
+    cells.forEach(cell => {
+        const [row, col] = cell.getAttribute("data-cell").split("-")
+        const cellNumber = boardData[+row][+col].num
+        console.log(cellNumber)
+    })
+}
 function cellValueChangedHandler() {
     if (selectedCellPosition) {
         const cells = Array.from(document.querySelectorAll(".cell"))
@@ -215,6 +224,7 @@ function cellValueChangedHandler() {
                 el.style.fontSize = "20px"
             }
         })
+        // changeWrongNumbersColor()
     }
 }
 
