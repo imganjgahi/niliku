@@ -196,6 +196,13 @@ function renderNumberPad() {
         })
         rootElement.appendChild(element)
     }
+    const element = document.createElement('span')
+    element.className = "numPad"
+    element.innerText = "?"
+    element.addEventListener("click", () => {
+        getCandidateNumbers()
+    })
+    rootElement.appendChild(element)
 }
 
 function cellValueChangedHandler() {
@@ -254,6 +261,17 @@ function resetGame(level, force) {
     document.getElementById("gameState").innerText = "Pick a Cell and Guess Your First Number"
 }
 
+function getCandidateNumbers() {
+    if(!selectedCellPosition){
+        alert("first you need to choose a cell")
+    }
+    const bordNumbers = boardData.map(row => row.map(c => c.num)).flat().join("")
+    const candidates = sudoku.get_candidates(bordNumbers)
+    if(candidates) {
+        const numbers = candidates[selectedCellPosition.rowIndex][selectedCellPosition.cellIndex]
+        document.getElementById("gameState").innerText = `candidate numbers: ${numbers.split("").join(", ")}`
+    }
+}
 function solvePuzzle() {
     if (confirm("Are you Shure you wanna solved puzzle?") === false) return
     const bordNumbers = boardData.map(row => row.map(c => c.num)).flat().join("")

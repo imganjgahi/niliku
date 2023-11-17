@@ -98,7 +98,7 @@ div#gameBoard {
 }
 
 .rowOfNumbers span {
-    width: 40px;
+    width: 20%;
     border: 1px solid #eee;
     height: 40px;
     display: flex;
