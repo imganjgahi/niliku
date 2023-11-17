@@ -20,7 +20,6 @@ body {
 .gameBoardWrapper {
     max-width: 100%;
     max-height: 370px;
-    width: 332px;
     margin: 10px auto;
     overflow: auto;
 }
@@ -51,8 +50,8 @@ div#gameBoard {
 
 .cell {
     border: 1px solid #eee;
-    width: 35px;
-    height: 35px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
